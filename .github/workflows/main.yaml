@@ -76,11 +76,12 @@ jobs:
         run: |
           echo "Forked pr is allowed to run the action"
 
-      - name: unlabel
-        if: github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-publish')
-        uses: dessant/label-actions@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          
+      # - name: unlabel
+      #   if: github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-publish')
+      #   uses: dessant/label-actions@v4
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create completed comment
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'

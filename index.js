@@ -15,7 +15,7 @@ const octokit = new Octokit();
 // });
 try {
   const result = await octokit.rest.teams.getMembershipForUserInOrg({
-    org: github.context.organization.login,
+    org: github.context.payload.organization.login,
     team_slug: "tmp",
     username: github.context.payload.sender.login,
   });
