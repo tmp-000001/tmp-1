@@ -14,7 +14,7 @@ const octokit = new Octokit();
 //   username: github.context.payload.sender.login,
 // });
 try {
-  const result = await octokit.teams.getMembershipForUserInOrg({
+  const result = await octokit.rest.teams.getMembershipForUserInOrg({
     org: github.context.repo.owner,
     team_slug: "tmp",
     username: github.context.payload.sender.login,
@@ -22,5 +22,6 @@ try {
 
   console.log("result:", result);
 } catch (error) {
+  console.error(error)
   console.error(github.context.payload.sender.login, "is not a member of tmp");
 }
