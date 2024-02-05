@@ -13,11 +13,14 @@ const octokit = new Octokit();
 //   team_slug: "tmp",
 //   username: github.context.payload.sender.login,
 // });
+try {
+  const result = await octokit.teams.getMembershipForUserInOrg({
+    org: github.context.repo.owner,
+    team_slug: "tmp",
+    username: github.context.payload.sender.login,
+  });
 
-const result = await octokit.teams.getMembershipForUserInOrg({
-  org: github.context.repo.owner,
-  team_slug: "tmp",
-  username: github.context.payload.sender.login,
-});
-
-console.log("result:", result);
+  console.log("result:", result);
+} catch (error) {
+  console.error(github.context.payload.sender.login, "is not a member of tmp");
+}
