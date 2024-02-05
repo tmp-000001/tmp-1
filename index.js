@@ -1,6 +1,7 @@
 import github from '@actions/github'
 import { Octokit } from '@octokit/action'
 
+console.log(JSON.stringify(github.context, null, 2))
 console.log(github.context.payload.sender.login)
 
 const octokit = new Octokit()
