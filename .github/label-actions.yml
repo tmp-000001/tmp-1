@@ -1,0 +1,5 @@
+// REF: https://github.com/marketplace/actions/label-actions
+'safe-publish':
+  prs:
+    unlabel:
+      - 'safe-publish'
