@@ -9,13 +9,13 @@ console.log(
 
 const octokit = new Octokit();
 // octokit.teams.getMembershipForUserInOrg({
-//   org: context.repo.owner,
+//   org: github.context.repo.owner,
 //   team_slug: "tmp",
 //   username: github.context.payload.sender.login,
 // });
 
 const result = await octokit.teams.getMembershipForUserInOrg({
-  org: context.repo.owner,
+  org: github.context.repo.owner,
   team_slug: "tmp",
   username: github.context.payload.sender.login,
 });
