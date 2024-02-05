@@ -1,7 +1,9 @@
 name: tmp-1
 
 on:
+  push:
   pull_request_target:
+    types: [opened, labeled]
 
 jobs:
   main:
@@ -9,30 +11,62 @@ jobs:
     #   contents: write # Let the bot push to main
     #   issues: write
     #   pull-requests: write # Let the bot comment on PR
+    permissions:
+      contents: write # Let the bot push to main
+      issues: write
+      pull-requests: write # Let the bot comment on PR
 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/create-github-app-token@v1
-        id: app-token
-        with:
-          app-id: ${{ vars.TMP_APP_ID }}
-          private-key: ${{ secrets.TMP_1_PRIVATE_KEY }}
-          # optional: owner not needed IF the app has access to the repo running the workflow
-          #   if you get 'RequestError [HttpError]: Not Found 404', pass in owner
-          # owner: ${{ github.repository_owner }}
+      # - uses: actions/create-github-app-token@v1
+      #   id: app-token
+      #   with:
+      #     app-id: ${{ vars.TMP_APP_ID }}
+      #     private-key: ${{ secrets.TMP_1_PRIVATE_KEY }}
+      #     # optional: owner not needed IF the app has access to the repo running the workflow
+      #     #   if you get 'RequestError [HttpError]: Not Found 404', pass in owner
+      #     # owner: ${{ github.repository_owner }}
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          # token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          run_install: false # For cache
+
+      # pnpm should be installed before the setup-node action. REF: https://github.com/actions/setup-node/issues/530
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: $GITHUB_HEAD_REF
+        run: echo $GITHUB_HEAD_REF
+
+      - name: node index.js
+        run: node index.js
+
+      - name: safe-publish
+        if: contains(github.event.pull_request.labels.*.name, 'safe-publish')
+        run: |
+          echo "Forked pr is allowed to run the action"
+          node index.js
 
       - name: Create completed comment
+        if: github.event_name == 'pull_request'
         uses: peter-evans/create-or-update-comment@v1
         with:
-          token: ${{ steps.app-token.outputs.token }}
+          # token: ${{ steps.app-token.outputs.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             Hi!
