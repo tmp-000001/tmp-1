@@ -53,6 +53,7 @@ jobs:
         run: echo $GITHUB_HEAD_REF
 
       - name: node index.js
+        if: github.event_name == 'pull_request'
         run: node index.js
 
       - name: safe-publish
