@@ -58,12 +58,13 @@ jobs:
       - name: node index.js
         if: github.event_name == 'pull_request_target'
         run: node index.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: safe-publish
         if: contains(github.event.pull_request.labels.*.name, 'safe-publish')
         run: |
           echo "Forked pr is allowed to run the action"
-          node index.js
 
       - name: Create completed comment
         if: github.event_name == 'pull_request_target'
