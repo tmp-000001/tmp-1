@@ -44,7 +44,7 @@ jobs:
       #   run: |
       #     git checkout ${GITHUB_HEAD_REF#refs/heads/} || git checkout -b ${GITHUB_HEAD_REF#refs/heads/} && git pull
 
-      # - name: Set up pnpm
+      - name: Set up pnpm
         uses: pnpm/action-setup@v2
         with:
           run_install: false # For cache
