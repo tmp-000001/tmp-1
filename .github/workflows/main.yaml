@@ -36,6 +36,14 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }} # for forked PRs
 
+      - name: Checkout PR into branch
+        if: contains(fromJson('["pull_request_target", "pull_request"]'), github.event_name)
+        # On GitHub Actions, PR and tag are not to be checked out into a branch, but "detached HEAD".
+        # Only push is checked out into a branch.
+        # This check out the PR into a branch.
+        run: |
+          git checkout ${GITHUB_HEAD_REF#refs/heads/} || git checkout -b ${GITHUB_HEAD_REF#refs/heads/} && git pull
+
       - name: Set up pnpm
         uses: pnpm/action-setup@v2
         with:
@@ -71,6 +79,8 @@ jobs:
       - name: unlabel
         if: github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe-publish')
         uses: dessant/label-actions@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create completed comment
         if: contains(fromJson('["pull_request_target", "pull_request"]'), github.event_name)
